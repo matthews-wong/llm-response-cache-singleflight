@@ -32,3 +32,17 @@ ships with the repo, so nothing here needs a network or an API key.
     make validate
 
 Runs the unit tests and the simulation.
+
+The simulation replays 400 seeded requests over 23 distinct prompts on 8 threads
+against the fake provider. With the cache, the provider is called 23 times, once
+per distinct prompt. That figure comes from this fixture workload, not from real
+traffic or a real model.
+
+## Usage
+
+    from cachegate import CachedGateway, FakeProvider, Request, TTLCache
+
+    gateway = CachedGateway(FakeProvider(), TTLCache(max_entries=1024, ttl_seconds=300))
+    print(gateway.complete(Request("model", "hello")).text)
+
+Swap `FakeProvider` for any object with a `complete(request) -> Response` method.
